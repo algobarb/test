@@ -169,8 +169,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
         run: |
-          gh pr create --base "develop" \
+          PULL_REQUEST_URL=$(gh pr create --base "develop" \
             --title "FOR REVIEW ONLY: Merge back py-algorand-sdk $RELEASE_TAG to develop" \
             --label "Skip-Release-Notes" \
-            --body "Merge back version changes to develop."
+            --body "Merge back version changes to develop." | tail -n 1)
           echo "Pull request to Develop created"
+          echo "PULL_REQUEST: $PULL_REQUEST_URL"
