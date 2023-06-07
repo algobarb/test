@@ -8,6 +8,14 @@
 
 **Full Changelog**: https://github.com/algorand/py-algorand-sdk/compare/1.0.0...v0.0.0
 
+# v0.0.0
+
+## Enhancement
+
+- Update CHANGELOG.md by algobarb in #38
+
+**Full Changelog**: https://github.com/algorand/py-algorand-sdk/compare/1.0.0...v0.0.0
+
 # v2.2.0
 
 ## What's Changed
