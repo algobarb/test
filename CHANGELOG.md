@@ -3,7 +3,7 @@
 # v2.2.0
 
 ## What's Changed
-dsfdsdfd
+fd
 
 
 **Full Changelog**: https://github.com/algorand/py-algorand-sdk/compare/v2.1.2...v2.2.0
