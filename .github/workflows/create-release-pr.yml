@@ -211,7 +211,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*After approvals*\nDeploy SDK using \n*<${{ env.SDK_DEPLOYMENT_URL }}|Deployment Pipeline>*\nSDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}"
+                    "text": "*After approvals*\nDeploy SDK using the*<${{ env.SDK_DEPLOYMENT_URL }}|Deployment Pipeline>* with the following parameters:\nSDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}"
                   }
                 }
               ]
