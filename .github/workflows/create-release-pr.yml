@@ -196,7 +196,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "${{ github.repository }} Release PR for ${{ env.RELEASE_TAG }}"
+                    "text": "${{ github.event.repository.name }} Release PR for ${{ env.RELEASE_TAG }}"
                   }
                 },
                 {
