@@ -157,11 +157,15 @@ jobs:
         run: |
           echo -e "# ${RELEASE_TAG}\n\n${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/algorand/py-algorand-sdk/compare/${PREVIOUS_VERSION}...${RELEASE_TAG}" > msg_body.txt
           export msg_body=$(cat msg_body.txt)
-          gh pr create --base "master" \
+          PULL_REQUEST_URL=$(gh pr create --base "master" \
             --title "FOR REVIEW ONLY: py-algorand-sdk $RELEASE_TAG" \
             --label "Skip-Release-Notes" \
-            --body "$msg_body"
-          echo "Pull request to Master created"
+            --body "$msg_body" | tail -n 1)
+          PULL_REQUEST_NUM=$(echo $PULL_REQUEST_URL | sed 's:.*/::')
+          echo "pull-request-master=$PULL_REQUEST_URL" >> $GITHUB_ENV
+          echo "pull-request-master-num=$PULL_REQUEST_NUM" >> $GITHUB_ENV
+          echo "Pull request to Master created: $PULL_REQUEST_URL"
+
 
       - name: Create Pull Request to Develop
         if: ${{ env.PRE_RELEASE_VERSION == '' }}
@@ -173,5 +177,33 @@ jobs:
             --title "FOR REVIEW ONLY: Merge back py-algorand-sdk $RELEASE_TAG to develop" \
             --label "Skip-Release-Notes" \
             --body "Merge back version changes to develop." | tail -n 1)
-          echo "Pull request to Develop created"
-          echo "PULL_REQUEST: $PULL_REQUEST_URL"
+          echo "Pull request to Develop created: $PULL_REQUEST_URL"
+          echo "pull-request-develop=$PULL_REQUEST_URL" >> $GITHUB_ENV
+
+      - name: Send Slack Message
+        id: slack
+        uses: slackapi/slack-github-action@v1.24.0
+        env:
+          RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "py-algorand-sdk Release PR for ${{ env.RELEASE_TAG }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "SDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}"
+                  }
+                }
+              ]
+            }
