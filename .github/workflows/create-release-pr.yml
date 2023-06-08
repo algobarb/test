@@ -187,6 +187,7 @@ jobs:
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
           SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+          SDK_DEPLOYMENT_URL: ${{ secrets.SDK_DEPLOYMENT_URL }}
         with:
           payload: |
             {
@@ -202,7 +203,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "SDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}"
+                    "text": "SDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}\nPull Request to master: ${{ env.pull-request-master}}\nPull Request to develop: {{ env.pull-request-develop}}"
                   }
                 }
               ]
