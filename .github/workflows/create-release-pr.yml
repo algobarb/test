@@ -204,14 +204,14 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Approvals needed for the following*:\nPull Request to master: ${{ env.pull-request-master}}${{ env.pull-request-develop-message }}"
+                    "text": "*Approvals needed for*:\nPull Request to master: ${{ env.pull-request-master}}${{ env.pull-request-develop-message }}"
                   }
                 },
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "After approvals, deploy with ${{ env.SDK_DEPLOYMENT_URL }}\nSDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}"
+                    "text": "*After approvals*\nDeploy SDK using \n*<${{ env.SDK_DEPLOYMENT_URL }}|Deployment Pipeline>*\nSDK: py-algorand-sdk\nRELEASE_PR_NUM: ${{ env.pull-request-master-num }}\nRELEASE_VERSION: ${{ env.RELEASE_VERSION }}\nPRE_RELEASE_VERSION: ${{ env.PRE_RELEASE_VERSION }}"
                   }
                 }
               ]
