@@ -211,7 +211,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "**Approvals needed for the following**:\nPull Request to master: ${{ env.pull-request-master}}${{ env.pull-request-develop-message }}"
+                    "text": "*Approvals needed for the following*:\nPull Request to master: ${{ env.pull-request-master}}${{ env.pull-request-develop-message }}"
                   }
                 }
               ]
