@@ -166,7 +166,6 @@ jobs:
           echo "pull-request-master-num=$PULL_REQUEST_NUM" >> $GITHUB_ENV
           echo "Pull request to Master created: $PULL_REQUEST_URL"
 
-
       - name: Create Pull Request to Develop
         if: ${{ env.PRE_RELEASE_VERSION == '' }}
         env:
@@ -197,7 +196,7 @@ jobs:
                   "type": "header",
                   "text": {
                     "type": "plain_text",
-                    "text": "py-algorand-sdk Release PR for ${{ env.RELEASE_TAG }}"
+                    "text": "${{ github.repository }} Release PR for ${{ env.RELEASE_TAG }}"
                   }
                 },
                 {
