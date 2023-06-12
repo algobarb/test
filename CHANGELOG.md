@@ -1,5 +1,13 @@
 # Changelog
 
+# v1.1.1
+
+## Enhancement
+
+- Update CHANGELOG.md by algobarb in #38
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v1.1.1
+
 # v2.2.0
 
 ## What's Changed
@@ -20,5 +28,3 @@ This release adds a fix to allow disambiguation of transaction finality in the c
 **Full Changelog**: https://github.com/algorand/py-algorand-sdk/compare/v2.1.1...v2.1.2
 
 # v2.1.1
-
-
