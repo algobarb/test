@@ -1,4 +1,12 @@
-# 2.1.0
+# Changelog
+
+# 1.0.0
+
+## Enhancement
+
+- Update CHANGELOG.md by algobarb in #38
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...1.0.0
 
 ## What's Changed
 Supports new devmode block timestamp offset endpoints.
