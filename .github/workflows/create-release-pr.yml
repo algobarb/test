@@ -41,7 +41,6 @@ jobs:
             echo "Version input doesn't match the regex pattern ^[0-9]+\.[0-9]+\.[0-9]+$"
             exit 1
           fi
-          echo "github_api_url: ${{ github.api_url }}"
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -161,7 +160,7 @@ jobs:
             --title "FOR REVIEW ONLY: ${{ github.event.repository.name }} $RELEASE_TAG" \
             --label "Skip-Release-Notes" \
             --body "$msg_body" | tail -n 1)
-          if [[ $PULL_REQUEST_URL =~ ^github.api_url ]]; then
+          if [[ $PULL_REQUEST_URL =~ ^https://github.com/${{ github.repository }}/pull/[0-9]+$ ]]; then
             PULL_REQUEST_NUM=$(echo $PULL_REQUEST_URL | sed 's:.*/::')
             echo "pull-request-master=$PULL_REQUEST_URL" >> $GITHUB_ENV
             echo "pull-request-master-num=$PULL_REQUEST_NUM" >> $GITHUB_ENV
@@ -182,7 +181,7 @@ jobs:
             --title "FOR REVIEW ONLY: Merge back ${{ github.event.repository.name }} $RELEASE_TAG to develop" \
             --label "Skip-Release-Notes" \
             --body "Merge back version changes to develop." | tail -n 1)
-          if [[ $PULL_REQUEST_URL =~ ^github.api_url ]]; then
+          if [[ $PULL_REQUEST_URL =~ ^https://github.com/${{ github.repository }}/pull/[0-9]+$ ]]; then
             echo "Pull request to Develop created: $PULL_REQUEST_URL"
             DEVELOP_PR_MESSAGE="\nPull Request to develop: $PULL_REQUEST_URL"
             echo "pull-request-develop-message=$DEVELOP_PR_MESSAGE" >> $GITHUB_ENV
