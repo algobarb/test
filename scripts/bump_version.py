@@ -1,23 +1,22 @@
 # This script bumps up the version in setup.py for new releases.
-# Usage: python bump_version.py {new_version} (--setup_py_path <path-to setup.py>)
+# Usage: python bump_version.py {new_version} (--read_me <path-to-README.md> --pom_xml <path-to-pom-xml>)
 
 import argparse
 import re
 
+def bump_version(new_version, file_path):
+    with open(file_path, "r") as file:
+        read_me = file.read()
 
-def bump_version(new_version, setup_py_path):
-    with open(setup_py_path, "r") as file:
-        setup_py = file.read()
-
-    new_setup_py = re.sub(
-        'version="[0-9]+\.[0-9]+\.[a-z.0-9]+"',
-        f'version="{new_version}"',
-        setup_py,
+    # Replace first instance of <version></version>
+    new_read_me = re.sub(
+        '<version>[0-9]+\.[0-9]+\.[-a-z0-9]+</version>',
+        f'<version>{new_version}</version>',
+        read_me, 1
     )
 
-    with open(setup_py_path, "w") as file:
-        file.write(new_setup_py)
-
+    with open(file_path, "w") as file:
+        file.write(new_read_me)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -26,9 +25,14 @@ if __name__ == "__main__":
     )
     parser.add_argument("new_version", help="New Version as major.minor.patch")
     parser.add_argument(
-        "-s", "--setup_py_path", default="setup.py", help="path to setup.py"
+        "--read_me", default="README.md", help="path to README.md"
+    )
+    parser.add_argument(
+        "--pom_xml", default="pom.xml", help="path to pom.xml"
     )
 
     args = parser.parse_args()
 
-    bump_version(args.new_version, args.setup_py_path)
+    bump_version(args.new_version, args.read_me)
+    bump_version(args.new_version, args.pom_xml)
+
