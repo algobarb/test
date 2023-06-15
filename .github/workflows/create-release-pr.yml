@@ -154,7 +154,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
         run: |
-          echo -e "${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_TAG}" > tmp_msg_body.txt
+          echo -e "# What's Changed\n\n${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_TAG}" > tmp_msg_body.txt
           export msg_body=$(cat tmp_msg_body.txt)
           rm tmp_msg_body.txt
           # Note: There's an issue adding teams as reviewers, see https://github.com/cli/cli/issues/6395
