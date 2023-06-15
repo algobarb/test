@@ -138,7 +138,7 @@ jobs:
         env:
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
         run: |
-          python3 .github/workflows/bump_version.py ${RELEASE_TAG}
+          python3 scripts/bump_version.py ${RELEASE_TAG}
 
       - name: Commit Changes
         uses: EndBug/add-and-commit@v9.1.3
