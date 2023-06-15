@@ -9,7 +9,7 @@ on:
         required: true
         type: string
       pre_release_version:
-        description: "Pre-Release version, e.g. 'b1', will be added behind the release_version in setup.py."
+        description: "Pre-Release version, e.g. 'beta.1', will be added behind the release_version as the tag."
         required: false
         type: string
 
@@ -28,8 +28,8 @@ jobs:
         run: |
           if [[ $RELEASE_VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             if [[ $PRE_RELEASE_VERSION =~ ^[a-z.0-9]+$ ]]; then
-              echo "release-tag: $RELEASE_VERSION$PRE_RELEASE_VERSION"
-              echo "release-tag=$RELEASE_VERSION$PRE_RELEASE_VERSION" >> $GITHUB_OUTPUT
+              echo "release-tag: $RELEASE_VERSION-$PRE_RELEASE_VERSION"
+              echo "release-tag=$RELEASE_VERSION-$PRE_RELEASE_VERSION" >> $GITHUB_OUTPUT
             elif [[ -n $PRE_RELEASE_VERSION ]]; then
               echo "Input pre_release_version is not empty, but does not match the regex pattern ^[a-z.0-9]+$"
               exit 1
@@ -96,7 +96,7 @@ jobs:
                         ]
                     },
                     {
-                        "title": "## Enhancement",
+                        "title": "## Enhancements",
                         "labels": [
                             "Enhancement"
                         ]
@@ -134,12 +134,6 @@ jobs:
           echo "$(tail -n +2 CHANGELOG.md)" > CHANGELOG.md
           echo -e "# Changelog\n\n# ${RELEASE_VERSION}\n\n${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_VERSION}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
 
-      - name: Update version in setup.py
-        env:
-          RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
-        run: |
-          python3 .github/workflows/bump_version.py ${RELEASE_TAG:1}
-
       - name: Commit Changes
         uses: EndBug/add-and-commit@v9.1.3
         env:
@@ -154,12 +148,12 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
         run: |
-          echo -e "${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_TAG}" > tmp_msg_body.txt
+          echo -e "# What's Changed\n\n${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_TAG}" > tmp_msg_body.txt
           export msg_body=$(cat tmp_msg_body.txt)
           rm tmp_msg_body.txt
           # Note: There's an issue adding teams as reviewers, see https://github.com/cli/cli/issues/6395
           PULL_REQUEST_URL=$(gh pr create --base "master" \
-            --title "FOR REVIEW ONLY: py-algorand-sdk $RELEASE_TAG" \
+            --title "FOR REVIEW ONLY: ${{ github.event.repository.name }} $RELEASE_TAG" \
             --label "Skip-Release-Notes" \
             --label "Team Hyper Flow" \
             --body "$msg_body" | tail -n 1)
@@ -181,7 +175,7 @@ jobs:
         run: |
           # Note: There's an issue adding teams as reviewers, see https://github.com/cli/cli/issues/6395
           PULL_REQUEST_URL=$(gh pr create --base "develop" \
-            --title "FOR REVIEW ONLY: Merge back py-algorand-sdk $RELEASE_TAG to develop" \
+            --title "FOR REVIEW ONLY: Merge back ${{ github.event.repository.name }} $RELEASE_TAG to develop" \
             --label "Skip-Release-Notes" \
             --label "Team Hyper Flow" \
             --body "Merge back version changes to develop." | tail -n 1)
