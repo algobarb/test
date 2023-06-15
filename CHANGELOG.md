@@ -1,3 +1,11 @@
+# v3.0.4
+
+## Enhancements
+
+- Update README.md by @algobarb in #103
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v3.0.4
+
 # 2.1.0
 
 ## What's Changed
