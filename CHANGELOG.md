@@ -1,5 +1,13 @@
 # Changelog
 
+# v0.0.4
+
+## Enhancement
+
+- Update CHANGELOG.md by algobarb in #38
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v0.0.4
+
 # v1.1.1
 
 ## Enhancement
