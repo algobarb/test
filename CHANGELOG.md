@@ -1,5 +1,13 @@
 # Changelog
 
+# v5.5.5
+
+## Enhancement
+
+- Update README.md by @algobarb in #82
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v5.5.5
+
 # v2.2.0
 
 ## What's Changed
