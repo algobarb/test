@@ -1,5 +1,9 @@
 # Changelog
 
+# v9.8.7
+
+- no changes**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v9.8.7
+
 # v2.2.0
 
 ## What's Changed
