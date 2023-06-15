@@ -1,5 +1,9 @@
 # Changelog
 
+# v0.34.5
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v0.34.5
+
 # v2.2.0
 
 ## What's Changed
