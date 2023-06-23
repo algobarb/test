@@ -1,3 +1,12 @@
+# v4.3.2
+
+## Enhancements
+
+- Update CHANGELOG.md by @algobarb in #38
+- Update README.md by @algobarb in #98
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v4.3.2
+
 # v2.5.0
 
 ## What's Changed
