@@ -4,6 +4,11 @@
 import argparse
 import re
 import json
+import sys
+
+def check_version(new_version):
+    if not re.fullmatch(r"[0-9]+\.[0-9]+\.[-a-z.0-9]+", new_version):
+        sys.exit("The version does not match the regex(major.minor.patch): [0-9]+\.[0-9]+\.[-a-z.0-9]+")
 
 def bump_package_json(new_version, file_path):
     with open(file_path, "r") as file:
@@ -30,7 +35,7 @@ def update_read_me(new_version, new_hash, file_path):
 
     # Replace version
     new_content = re.sub(
-        'algosdk@v[0-9]+\.[0-9]+\.[-a-z0-9]+',
+        'algosdk@v[0-9]+\.[0-9]+\.[-a-z.0-9]+',
         f'algosdk@v{new_version}',
         content,
     )
@@ -64,7 +69,7 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-
+    check_version(args.new_version)
     bump_package_json(args.new_version, args.package_json)
     bump_package_lock_json(args.new_version, args.package_lock_json)
     update_read_me(args.new_version, args.new_hash, args.read_me)
