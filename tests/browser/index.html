@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Algosdk Mocha Browser Testing</title>
+    <link rel="stylesheet" href="../../node_modules/mocha/mocha.css" />
+  </head>
+
+  <body>
+    <h1>Algosdk Mocha Browser Testing</h1>
+    <div id="mocha"></div>
+
+    <script src="../../node_modules/mocha/mocha.js"></script>
+
+    <script class="mocha-init">
+      // this is necessary to get assert to work, since assert uses util and util checks process.env.NODE_DEBUG
+      window.process = { env: {} };
+
+      mocha.setup('bdd');
+    </script>
+    <script src="bundle.js"></script>
+  </body>
+</html>

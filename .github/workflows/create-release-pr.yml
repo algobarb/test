@@ -31,14 +31,14 @@ jobs:
               echo "release-tag: $RELEASE_VERSION-$PRE_RELEASE_VERSION"
               echo "release-tag=$RELEASE_VERSION-$PRE_RELEASE_VERSION" >> $GITHUB_OUTPUT
             elif [[ -n $PRE_RELEASE_VERSION ]]; then
-              echo "Input pre_release_version is not empty, but does not match the regex pattern ^[a-z.0-9]+$"
+              echo "Input pre_release_version is not empty, but does not match the regex pattern ^[-a-z0-9]+$"
               exit 1
             else
               echo "release-tag: $RELEASE_VERSION"
               echo "release-tag=$RELEASE_VERSION" >> $GITHUB_OUTPUT
             fi
           else
-            echo "Version input doesn't match the regex pattern ^v[0-9]+\.[0-9]+\.[0-9]+$"
+            echo "Version input doesn't match the regex pattern ^[0-9]+\.[0-9]+\.[0-9]+$"
             exit 1
           fi
 
@@ -78,52 +78,25 @@ jobs:
           fi
 
       - name: Build Changelog
-        uses: mikepenz/release-changelog-builder-action@v3.7.2
         id: build-changelog
         env:
           PREVIOUS_VERSION: ${{ steps.get-release.outputs.latest-tag }}
-        with:
-          fromTag: ${{ env.PREVIOUS_VERSION }}
-          toTag: ${{ env.RELEASE_BRANCH }}
-          failOnError: true
-          configurationJson: |
-            {
-                "categories": [
-                    {
-                        "title": "## New Features",
-                        "labels": [
-                            "New Feature"
-                        ]
-                    },
-                    {
-                        "title": "## Enhancement",
-                        "labels": [
-                            "Enhancement"
-                        ]
-                    },
-                    {
-                        "title": "## Bug Fixes",
-                        "labels": [
-                            "Bug-Fix"
-                        ]
-                    },
-                    {
-                        "title": "## Not Yet Enabled",
-                        "labels": [
-                            "Not-Yet-Enabled"
-                        ]
-                    }
-                ],
-                "ignore_labels": [
-                    "Skip-Release-Notes"
-                ],
-                "sort": {
-                    "order": "ASC",
-                    "on_property": "mergedAt"
-                },
-                "template": "#{{CHANGELOG}}",
-                "pr_template": "- #{{TITLE}} by #{{AUTHOR}} in ##{{NUMBER}}"
-            }
+        run: |
+          CHANGELOG=$(curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ github.token }}"\
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
+            -d '{"tag_name":"${{ env.RELEASE_VERSION }}","target_commitish":"${{ env.RELEASE_BRANCH }}","previous_tag_name":"${{ env.PREVIOUS_VERSION }}","configuration_file_path":".github/release.yml"}' \
+            | jq -r '.body')
+
+          # The EOF steps are used to save multiline string in github:
+          # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#example-of-a-multiline-string
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "changelog<<$EOF" >> $GITHUB_OUTPUT
+          echo -e "${CHANGELOG}" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Update Changelog
         if: ${{ env.PRE_RELEASE_VERSION == '' }}
@@ -131,8 +104,23 @@ jobs:
           CHANGELOG_CONTENT: ${{ steps.build-changelog.outputs.changelog }}
           PREVIOUS_VERSION: ${{ steps.get-release.outputs.latest-tag }}
         run: |
-          echo "$(tail -n +2 CHANGELOG.md)" > CHANGELOG.md
-          echo -e "# Changelog\n\n# ${RELEASE_VERSION}\n\n${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_VERSION}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+          echo -e "# ${RELEASE_VERSION}\n\n${CHANGELOG_CONTENT}" | cat - CHANGELOG.md > temp && mv temp CHANGELOG.md
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Update Version References in Source
+        env:
+          RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
+        run: |
+          rm -rf dist node_modules
+          npm ci
+          npm run build
+          NEW_HASH=$(cat dist/browser/algosdk.min.js | openssl dgst -sha384 -binary | openssl base64 -A)
+          python3 scripts/bump_version.py ${RELEASE_TAG:1} --new_hash "${NEW_HASH}"
+          npx prettier --write .
 
       - name: Commit Changes
         uses: EndBug/add-and-commit@v9.1.3
@@ -148,16 +136,21 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
         run: |
-          echo -e "# ${RELEASE_TAG}\n\n${CHANGELOG_CONTENT}**Full Changelog**: https://github.com/${{ github.repository }}/compare/${PREVIOUS_VERSION}...${RELEASE_TAG}" > msg_body.txt
-          export msg_body=$(cat msg_body.txt)
+          # Note: There's an issue adding teams as reviewers, see https://github.com/cli/cli/issues/6395
           PULL_REQUEST_URL=$(gh pr create --base "master" \
             --title "FOR REVIEW ONLY: ${{ github.event.repository.name }} $RELEASE_TAG" \
             --label "Skip-Release-Notes" \
-            --body "$msg_body" | tail -n 1)
-          PULL_REQUEST_NUM=$(echo $PULL_REQUEST_URL | sed 's:.*/::')
-          echo "pull-request-master=$PULL_REQUEST_URL" >> $GITHUB_ENV
-          echo "pull-request-master-num=$PULL_REQUEST_NUM" >> $GITHUB_ENV
-          echo "Pull request to Master created: $PULL_REQUEST_URL"
+            --label "Team Hyper Flow" \
+            --body "${CHANGELOG_CONTENT}" | tail -n 1)
+          if [[ $PULL_REQUEST_URL =~ ^https://github.com/${{ github.repository }}/pull/[0-9]+$ ]]; then
+            PULL_REQUEST_NUM=$(echo $PULL_REQUEST_URL | sed 's:.*/::')
+            echo "pull-request-master=$PULL_REQUEST_URL" >> $GITHUB_ENV
+            echo "pull-request-master-num=$PULL_REQUEST_NUM" >> $GITHUB_ENV
+            echo "Pull request to Master created: $PULL_REQUEST_URL"
+          else
+            echo "There was an issue creating the pull request to master branch."
+            exit 1
+          fi
 
       - name: Create Pull Request to Develop
         if: ${{ env.PRE_RELEASE_VERSION == '' }}
@@ -165,13 +158,20 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ steps.set-release.outputs.release-tag }}
         run: |
+          # Note: There's an issue adding teams as reviewers, see https://github.com/cli/cli/issues/6395
           PULL_REQUEST_URL=$(gh pr create --base "develop" \
             --title "FOR REVIEW ONLY: Merge back ${{ github.event.repository.name }} $RELEASE_TAG to develop" \
             --label "Skip-Release-Notes" \
+            --label "Team Hyper Flow" \
             --body "Merge back version changes to develop." | tail -n 1)
-          echo "Pull request to Develop created: $PULL_REQUEST_URL"
-          DEVELOP_PR_MESSAGE="\nPull Request to develop: $PULL_REQUEST_URL"
-          echo "pull-request-develop-message=$DEVELOP_PR_MESSAGE" >> $GITHUB_ENV
+          if [[ $PULL_REQUEST_URL =~ ^https://github.com/${{ github.repository }}/pull/[0-9]+$ ]]; then
+            echo "Pull request to Develop created: $PULL_REQUEST_URL"
+            DEVELOP_PR_MESSAGE="\nPull Request to develop: $PULL_REQUEST_URL"
+            echo "pull-request-develop-message=$DEVELOP_PR_MESSAGE" >> $GITHUB_ENV
+          else
+            echo "There was an issue creating the pull request to develop branch."
+            exit 1
+          fi
 
       - name: Send Slack Message
         id: slack
