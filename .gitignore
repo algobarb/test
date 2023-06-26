@@ -1,0 +1,31 @@
+.DS_Store
+
+.idea/
+# Webstorm
+*.iml
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# npm
+node_modules/
+
+# Testing files
+*.feature
+temp
+
+# Environment information
+examples/.env
+
+test-harness/
+tests/cucumber/features/
+tests/cucumber/browser/build
+tests/browser/bundle.*
+
+# Builds
+dist/
+docs/
+built/
+
+# Caches
+.eslintcache
