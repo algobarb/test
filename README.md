@@ -20,7 +20,7 @@ Include a minified browser bundle directly in your HTML like so:
 
 ```html
 <script
-  src="https://unpkg.com/algosdk@v3.3.3/dist/browser/algosdk.min.js"
+  src="https://unpkg.com/algosdk@v3.2.2$/dist/browser/algosdk.min.js"
   integrity="sha384-123"
   crossorigin="anonymous"
 ></script>
@@ -30,7 +30,7 @@ or
 
 ```html
 <script
-  src="https://cdn.jsdelivr.net/npm/algosdk@v3.3.3/dist/browser/algosdk.min.js"
+  src="https://cdn.jsdelivr.net/npm/algosdk@v3.2.2$/dist/browser/algosdk.min.js"
   integrity="sha384-123"
   crossorigin="anonymous"
 ></script>
