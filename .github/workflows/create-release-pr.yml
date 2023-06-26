@@ -78,52 +78,63 @@ jobs:
           fi
 
       - name: Build Changelog
-        uses: mikepenz/release-changelog-builder-action@v3.7.2
         id: build-changelog
-        env:
-          PREVIOUS_VERSION: ${{ steps.get-release.outputs.latest-tag }}
-        with:
-          fromTag: ${{ env.PREVIOUS_VERSION }}
-          toTag: ${{ env.RELEASE_BRANCH }}
-          failOnError: true
-          configurationJson: |
-            {
-                "categories": [
-                    {
-                        "title": "## New Features",
-                        "labels": [
-                            "New Feature"
-                        ]
-                    },
-                    {
-                        "title": "## Enhancements",
-                        "labels": [
-                            "Enhancement"
-                        ]
-                    },
-                    {
-                        "title": "## Bug Fixes",
-                        "labels": [
-                            "Bug-Fix"
-                        ]
-                    },
-                    {
-                        "title": "## Not Yet Enabled",
-                        "labels": [
-                            "Not-Yet-Enabled"
-                        ]
-                    }
-                ],
-                "ignore_labels": [
-                    "Skip-Release-Notes"
-                ],
-                "sort": {
-                    "order": "ASC",
-                    "on_property": "mergedAt"
-                },
-                "template": "#{{CHANGELOG}}",
-                "pr_template": "- #{{TITLE}} by @#{{AUTHOR}} in ##{{NUMBER}}"
-            }
+        run: |
+          changelog=$(curl -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ github.token }}"\
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/releases/generate-notes \
+            -d '{"tag_name":"${{ env.RELEASE_VERSION }}","target_commitish":"${{ env.RELEASE_BRANCH }}","previous_tag_name":"${{ env.PREVIOUS_VERSION }}","configuration_file_path":".github/release.yml"}')
+          echo "changelog=$changelog" >> $GITHUB_OUTPUT
+      # - name: Build Changelog
+      #   uses: mikepenz/release-changelog-builder-action@v3.7.2
+      #   id: build-changelog
+      #   env:
+      #     PREVIOUS_VERSION: ${{ steps.get-release.outputs.latest-tag }}
+      #   with:
+      #     fromTag: ${{ env.PREVIOUS_VERSION }}
+      #     toTag: ${{ env.RELEASE_BRANCH }}
+      #     failOnError: true
+      #     configurationJson: |
+      #       {
+      #           "categories": [
+      #               {
+      #                   "title": "## New Features",
+      #                   "labels": [
+      #                       "New Feature"
+      #                   ]
+      #               },
+      #               {
+      #                   "title": "## Enhancements",
+      #                   "labels": [
+      #                       "Enhancement"
+      #                   ]
+      #               },
+      #               {
+      #                   "title": "## Bug Fixes",
+      #                   "labels": [
+      #                       "Bug-Fix"
+      #                   ]
+      #               },
+      #               {
+      #                   "title": "## Not Yet Enabled",
+      #                   "labels": [
+      #                       "Not-Yet-Enabled"
+      #                   ]
+      #               }
+      #           ],
+      #           "ignore_labels": [
+      #               "Skip-Release-Notes"
+      #           ],
+      #           "sort": {
+      #               "order": "ASC",
+      #               "on_property": "mergedAt"
+      #           },
+      #           "template": "#{{CHANGELOG}}",
+      #           "pr_template": "- #{{TITLE}} by @#{{AUTHOR}} in ##{{NUMBER}}"
+      #       }
 
       - name: Update Changelog
         if: ${{ env.PRE_RELEASE_VERSION == '' }}
