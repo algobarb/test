@@ -1,3 +1,16 @@
+# v7.7.5
+
+<!-- Release notes generated using configuration in .github/release.yml at release/v7.7.5 -->
+
+## What's Changed
+
+### Other
+
+- Update CHANGELOG.md by @algobarb in https://github.com/algobarb/test/pull/38
+- Update README.md by @algobarb in https://github.com/algobarb/test/pull/98
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v7.7.5
+
 # v2.5.0
 
 ## What's Changed
