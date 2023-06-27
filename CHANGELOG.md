@@ -1,3 +1,14 @@
+# v9.0.0
+
+<!-- Release notes generated using configuration in .github/release.yml at release/v9.0.0 -->
+
+## What's Changed
+### Enhancements
+* Update CHANGELOG.md by @algobarb in https://github.com/algobarb/test/pull/38
+* Test: Update README.md by @algobarb in https://github.com/algobarb/test/pull/132
+
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v9.0.0
 # Changelog
 
 # v1.1.1
