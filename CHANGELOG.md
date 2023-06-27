@@ -1,5 +1,17 @@
 # Changelog
 
+# v1.0.1
+
+<!-- Release notes generated using configuration in .github/release.yml at release/v1.0.1 -->
+
+## What's Changed
+### Enhancements
+* Update README.md by @algobarb in https://github.com/algobarb/test/pull/82
+* Test: Update README.md by @algobarb in https://github.com/algobarb/test/pull/127
+
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...v1.0.1
+
 # v2.2.0
 
 ## What's Changed
