@@ -1,3 +1,14 @@
+# 9.0.6
+
+<!-- Release notes generated using configuration in .github/release.yml at release/9.0.6 -->
+
+## What's Changed
+### Enhancements
+* Update README.md by @algobarb in https://github.com/algobarb/test/pull/98
+
+
+**Full Changelog**: https://github.com/algobarb/test/compare/1.0.0...9.0.6
+
 # 2.1.0
 
 ## What's Changed
