@@ -1,5 +1,9 @@
 # Changelog
 
+# v8.0.0
+
+null
+
 # v2.2.0
 
 ## What's Changed
